@@ -46,4 +46,5 @@ RUN mkdir -p /opt/liquibase_extra \
 
 WORKDIR /changelogs
 
-ENTRYPOINT ["/usr/local/bin/liquibase", "--classpath", "/opt/jdbc_drivers/postgresql.jar:/opt/jdbc_drivers/mssql-jdbc.jar:/opt/jdbc_drivers/mysql.jar:/opt/liquibase_extra/liquibase-mssql.jar"]
+COPY ./docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
