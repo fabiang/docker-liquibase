@@ -6,22 +6,14 @@ services:
 env:
   global:
     - IMAGE_NAME=fabiang/liquibase
+    - version=3.6
 
 before_script:
   - docker pull "$IMAGE_NAME" || true
 
 script:
   - docker build --pull --cache-from "$IMAGE_NAME" --tag "$IMAGE_NAME" .
-  - |
-    docker run --rm -t --entrypoint /bin/bash "$IMAGE_NAME" "apk add --update -q file \
-        && file /opt/liquibase_extra/liquibase-mssql.jar \
-        && file /opt/jdbc_drivers/postgresql.jar \
-        && file /opt/jdbc_drivers/mssql-jdbc.jar \
-        && file /opt/jdbc_drivers/mysql.jar \
-        && bash -c 'o() { type=$(file --brief --mime-type /opt/liquibase_extra/liquibase-mssql.jar); if [[ \"$type\" == "application/zip" ]]; then return 0; else return 1; fi }; o' \
-        && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/postgresql.jar); if [[ \"$type\" == "application/java-archive" ]]; then return 0; else return 1; fi }; o' \
-        && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/mssql-jdbc.jar); if [[ \"$type\" == "application/zip" ]]; then return 0; else return 1; fi }; o' \
-        && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/mysql.jar); if [[ \"$type\" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'"
+  - docker run --rm -t --entrypoint /bin/bash "$IMAGE_NAME" liquibase --version
 
 after_script:
   - docker images
@@ -29,10 +21,10 @@ after_script:
 before_deploy:
   - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
   - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:latest"
-  - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:3.6"
+  - docker tag "$IMAGE_NAME" "${IMAGE_NAME}:${version}"
 
 deploy:
   provider: script
-  script: docker push "${IMAGE_NAME}:latest" && docker push "${IMAGE_NAME}:3.6"
+  script: docker push "${IMAGE_NAME}:latest" && docker push "${IMAGE_NAME}:${version}"
   on:
     branch: master
