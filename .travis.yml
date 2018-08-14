@@ -18,10 +18,10 @@ script:
   - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && file /opt/jdbc_drivers/postgresql.jar"
   - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && file /opt/jdbc_drivers/mssql-jdbc.jar"
   - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && file /opt/jdbc_drivers/mysql.jar"
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && bash -c 'o() { type=$(file --brief --mime-type /opt/liquibase_extra/liquibase-mssql.jar); if [[ "$type" == "application/zip" ]]; then return 0; else return 1; fi }; o"
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/postgresql.jar); if [[ "$type" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'"
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/mssql-jdbc.jar); if [[ "$type" == "application/zip" ]]; then return 0; else return 1; fi }; o'"
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/mysql.jar); if [[ "$type" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'"
+  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && bash -c 'o() { type=$(file --brief --mime-type /opt/liquibase_extra/liquibase-mssql.jar); if [[ \"$type\" == \"application/zip\" ]]; then return 0; else return 1; fi }; o"
+  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/postgresql.jar); if [[ \"$type\" == \"application/java-archive\" ]]; then return 0; else return 1; fi }; o'"
+  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/mssql-jdbc.jar); if [[ \"$type\" == \"application/zip\" ]]; then return 0; else return 1; fi }; o'"
+  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && bash -c 'o() { type=$(file --brief --mime-type /opt/jdbc_drivers/mysql.jar); if [[ \"$type\" == \"application/java-archive\" ]]; then return 0; else return 1; fi }; o'"
 
 after_script:
   - docker images
