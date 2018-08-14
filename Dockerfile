@@ -10,7 +10,7 @@ ARG SL4J_VERSION=1.7.25
 
 # Liquibase itself
 RUN apk update \
-    && apk add --no-cache curl \
+    && apk add --no-cache curl bash \
     && curl -L --output /tmp/liquibase-bin.tar.gz https://github.com/liquibase/liquibase/releases/download/liquibase-parent-${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}-bin.tar.gz \
     && mkdir -p /usr/local/liquibase \
     && tar -xzf /tmp/liquibase-bin.tar.gz -C /usr/local/liquibase \
