@@ -47,4 +47,6 @@ RUN mkdir -p /opt/liquibase_extra \
 WORKDIR /changelogs
 
 COPY ./docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["liquibase"]
