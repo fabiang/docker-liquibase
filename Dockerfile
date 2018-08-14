@@ -8,6 +8,8 @@ ARG JDBC_SQLSERVER_VERSION=7.0.0
 ARG JDBC_MYSQL_VERSION=8.0.12
 ARG SL4J_VERSION=1.7.25
 
+ENV LIQUIBASE_HOME=/usr/local/liquibase/
+
 # Liquibase itself
 RUN apk update \
     && apk add --no-cache curl bash \
