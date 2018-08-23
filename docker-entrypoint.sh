@@ -13,7 +13,7 @@ if [ "$1" = 'liquibase' ]; then
         return
     fi
 
-    exec liquibase --classpath="/opt/jdbc_drivers/postgresql.jar:/opt/jdbc_drivers/mssql-jdbc.jar:/opt/jdbc_drivers/mysql.jar:/opt/liquibase_extra/liquibase-mssql.jar" "${@:2}"
+    exec liquibase --classpath="/opt/jdbc_drivers/postgresql.jar:/opt/jdbc_drivers/mssql-jdbc.jar:/opt/jdbc_drivers/mysql.jar:/opt/jdbc_drivers/jtds.jar:/opt/liquibase_extra/liquibase-mssql.jar" "${@:2}"
 fi
 
 exec "$@"
