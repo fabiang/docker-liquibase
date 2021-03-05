@@ -24,7 +24,6 @@ RUN apk update \
     && apk del curl libssh2 libcurl \
     && rm /tmp/liquibase-bin.tar.gz
 
-
 # DB drivers and extra extensions
 RUN apk update \
     && apk add --no-cache curl unzip \

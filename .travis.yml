@@ -8,6 +8,7 @@ env:
     - IMAGE_NAME=fabiang/liquibase
   jobs:
     - version=4.3 LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/v4.3.1/liquibase-4.3.1.tar.gz latest=true
+    - version=4.1 LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/v4.1.1/liquibase-4.1.1.tar.gz latest=false
     - version=3.6 LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.6.3/liquibase-3.6.3-bin.tar.gz latest=false
 
 script:
