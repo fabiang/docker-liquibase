@@ -2,7 +2,7 @@ FROM java:8-jre-alpine
 
 MAINTAINER Fabian Grutschus <f.grutschus@lubyte.de>
 
-ARG LIQUIBASE_VERSION=4.3.1
+ARG LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/v4.3.1/liquibase-4.3.1.tar.gz
 ARG JDBC_POSTGRESQL_VERSION=42.2.19
 ARG JDBC_SQLSERVER_VERSION=9.2.1
 ARG JDBC_MYSQL_VERSION=8.0.16
@@ -16,7 +16,7 @@ COPY ./liquibase-shim.sh /usr/local/bin/liquibase
 # Liquibase itself
 RUN apk update \
     && apk add --no-cache curl bash \
-    && curl -L --output /tmp/liquibase-bin.tar.gz https://github.com/liquibase/liquibase/releases/download/v${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}.tar.gz \
+    && curl -L --output /tmp/liquibase-bin.tar.gz ${LIQUIBASE_URL=} \
     && mkdir -p /usr/local/liquibase \
     && tar -xzf /tmp/liquibase-bin.tar.gz -C /usr/local/liquibase \
     && chmod +x /usr/local/liquibase/liquibase \
