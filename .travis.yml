@@ -6,24 +6,23 @@ services:
 env:
   global:
     - IMAGE_NAME=fabiang/liquibase
-    - version=4.3
-
-before_script:
-  - docker pull "$IMAGE_NAME" || true
+  jobs:
+    - version=4.3 LIQUIBASE_VERSION=4.3.1 latest=true
+    - version=3.6 LIQUIBASE_VERSION=3.6.3 latest=false
 
 script:
-  - docker build --pull --cache-from "$IMAGE_NAME" --tag "$IMAGE_NAME" .
-  - docker run --rm -it "$IMAGE_NAME" liquibase --version
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && file /usr/local/liquibase/liquibase_extra/liquibase-mssql.jar"
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/postgresql.jar"
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/mssql-jdbc.jar"
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/mysql.jar"
-  - docker run --rm -it "$IMAGE_NAME" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/jtds.jar"
-  - docker run --rm -it "$IMAGE_NAME" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/liquibase_extra/liquibase-mssql.jar); if [[ "$type" == "application/zip" ]]; then return 0; else return 1; fi }; o'
-  - docker run --rm -it "$IMAGE_NAME" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/jdbc_drivers/postgresql.jar); if [[ "$type" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'
-  - docker run --rm -it "$IMAGE_NAME" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/jdbc_drivers/mssql-jdbc.jar); if [[ "$type" == "application/zip" ]]; then return 0; else return 1; fi }; o'
-  - docker run --rm -it "$IMAGE_NAME" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/jdbc_drivers/mysql.jar); if [[ "$type" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'
-  - docker run --rm -it "$IMAGE_NAME" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/jdbc_drivers/jtds.jar); if [[ "$type" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'
+  - docker build --pull --build-arg=$LIQUIBASE_VERSION --tag "$IMAGE_NAME:$version" .
+  - docker run --rm -it "$IMAGE_NAME:$version" liquibase --version
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c "apk add --update -q file && file /usr/local/liquibase/liquibase_extra/liquibase-mssql.jar"
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/postgresql.jar"
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/mssql-jdbc.jar"
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/mysql.jar"
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/jtds.jar"
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/liquibase_extra/liquibase-mssql.jar); if [[ "$type" == "application/zip" ]]; then return 0; else return 1; fi }; o'
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/jdbc_drivers/postgresql.jar); if [[ "$type" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/jdbc_drivers/mssql-jdbc.jar); if [[ "$type" == "application/zip" ]]; then return 0; else return 1; fi }; o'
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/jdbc_drivers/mysql.jar); if [[ "$type" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'
+  - docker run --rm -it "$IMAGE_NAME:$version" bash -c 'o() { apk add --update -q file; type=$(file --brief --mime-type /usr/local/liquibase/jdbc_drivers/jtds.jar); if [[ "$type" == "application/java-archive" ]]; then return 0; else return 1; fi }; o'
 
 deploy:
   provider: script
