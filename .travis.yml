@@ -11,7 +11,7 @@ env:
     - version=3.6 LIQUIBASE_VERSION=3.6.3 latest=false
 
 script:
-  - docker build --pull --build-arg=$LIQUIBASE_VERSION --tag "$IMAGE_NAME:$version" .
+  - docker build --pull --build-arg=LIQUIBASE_VERSION=$LIQUIBASE_VERSION --tag "$IMAGE_NAME:$version" .
   - docker run --rm -it "$IMAGE_NAME:$version" liquibase --version
   - docker run --rm -it "$IMAGE_NAME:$version" bash -c "apk add --update -q file && file /usr/local/liquibase/liquibase_extra/liquibase-mssql.jar"
   - docker run --rm -it "$IMAGE_NAME:$version" bash -c "apk add --update -q file && file /usr/local/liquibase/jdbc_drivers/postgresql.jar"
