@@ -3,7 +3,7 @@
 echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
 docker push "${IMAGE_NAME}:${version}"
 
-if [ "$latest" eq "true" ]; then
+if [ "$latest" = "true" ]; then
     docker tag "$IMAGE_NAME${version}" "${IMAGE_NAME}:latest"
     docker push "${IMAGE_NAME}:latest"
 fi
