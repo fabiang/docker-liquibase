@@ -1,0 +1,46 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1
+jobs:
+  docker-image:
+    environment:
+      IMAGE_NAME=fabiang/liquibase
+    parameters:
+      version:
+        type: string
+      download_url:
+        type: string
+      extra_args:
+        type: string
+      latest:
+        type: boolean
+    machine: true
+    steps:
+      - checkout
+      - run: |
+          docker build --pull << parameters.extra_args >> \
+            -t $IMAGE_NAME:<< parameters.version >> \
+            --build-arg LIQUIBASE_URL=<< parameters.download_url >> .
+      - run: |
+          export version=<< parameters.version >>
+          export latest=<< parameters.latest >>
+          bash docker-push
+workflows:
+  build-all:
+    jobs:
+      - docker-image:
+          version: "4.3"
+          download_url: "https://github.com/liquibase/liquibase/releases/download/v4.3.1/liquibase-4.3.1.tar.gz"
+          extra_args: " -t fabiang/liquibase:latest"
+          latest: true
+      - docker-image:
+          version: "4.1"
+          download_url: "https://github.com/liquibase/liquibase/releases/download/v4.1.1/liquibase-4.1.1.tar.gz"
+          extra_args: ""
+          latest: false
+      - docker-image:
+          version: "3.6"
+          download_url: "https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.6.3/liquibase-3.6.3-bin.tar.gz"
+          extra_args: ""
+          latest: false
+
