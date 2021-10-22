@@ -7,7 +7,7 @@ This Docker image includes Liquibase 3.6 and supports the following:
 - SQLServer
 - SQLServer Extension for Liquibase
 
-[![CircleCI](https://circleci.com/gh/fabiang/liquibase.svg?style=svg)](https://circleci.com/gh/fabiang/liquibase)
+[![CircleCI](https://circleci.com/gh/fabiang/docker-liquibase.svg?style=svg)](https://circleci.com/gh/fabiang/docker-liquibase)
 [![fabiang/liquibase](http://dockeri.co/image/fabiang/liquibase)](https://registry.hub.docker.com/u/fabiang/liquibase/)
 
 ## Usage

@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # This script makes sure that our extra class paths are set when executing liquibase
+
+set -o pipefail
 set +e
+
+# Script trace mode
+if [ "${DEBUG_MODE,,}" == "true" ]; then
+    set -o xtrace
+fi
 
 extraClassPaths="/usr/local/liquibase/jdbc_drivers/postgresql.jar:/usr/local/liquibase/jdbc_drivers/mssql-jdbc.jar:/usr/local/liquibase/jdbc_drivers/mysql.jar:/usr/local/liquibase/jdbc_drivers/jtds.jar:/usr/local/liquibase/liquibase_extra/liquibase-mssql.jar"
 binPath="/usr/local/liquibase/liquibase"

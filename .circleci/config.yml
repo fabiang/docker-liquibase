@@ -14,13 +14,17 @@ jobs:
         type: string
       latest:
         type: boolean
+      checksum:
+        type: string
     machine: true
     steps:
       - checkout
       - run: |
           docker build --pull << parameters.extra_args >> \
             -t $IMAGE_NAME:<< parameters.version >> \
-            --build-arg LIQUIBASE_URL=<< parameters.download_url >> .
+            --build-arg LIQUIBASE_URL=<< parameters.download_url >> \
+            --build-arg LIQUIBASE_CHECKSUM=<< parameters.checksum >> \
+            .
       - run: |
           export version=<< parameters.version >>
           export latest=<< parameters.latest >>
@@ -29,18 +33,26 @@ workflows:
   build-all:
     jobs:
       - docker-image:
-          version: "4.3"
-          download_url: "https://github.com/liquibase/liquibase/releases/download/v4.3.1/liquibase-4.3.1.tar.gz"
+          version: "4.5"
+          download_url: "https://github.com/liquibase/liquibase/releases/download/v4.5.0/liquibase-4.5.0.tar.gz"
+          checksum: f7a5440c348cf87308698447691e6c30fff433de
           extra_args: " -t fabiang/liquibase:latest"
           latest: true
       - docker-image:
+          version: "4.3"
+          download_url: "https://github.com/liquibase/liquibase/releases/download/v4.3.5/liquibase-4.3.5.tar.gz"
+          checksum: 6e1edd94c024c613a59246881326babd32c120a1
+          extra_args: ""
+          latest: false
+      - docker-image:
           version: "4.1"
           download_url: "https://github.com/liquibase/liquibase/releases/download/v4.1.1/liquibase-4.1.1.tar.gz"
+          checksum: a855a089b84220ebb86969c407b67abab4f66eba
           extra_args: ""
           latest: false
       - docker-image:
           version: "3.6"
           download_url: "https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.6.3/liquibase-3.6.3-bin.tar.gz"
+          checksum: 32ac40e5602d2a93a44c0c67b5b55bc304624a46
           extra_args: ""
           latest: false
-
