@@ -4,6 +4,7 @@ This Docker image includes Liquibase 3.6 and supports the following:
 
 - PostgreSQL
 - Mysql
+- MariaDB
 - SQLServer
 - SQLServer Extension for Liquibase
 

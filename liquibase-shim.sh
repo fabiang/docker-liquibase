@@ -9,7 +9,7 @@ if [ "${DEBUG_MODE,,}" == "true" ]; then
     set -o xtrace
 fi
 
-extraClassPaths="/usr/local/liquibase/jdbc_drivers/postgresql.jar:/usr/local/liquibase/jdbc_drivers/mssql-jdbc.jar:/usr/local/liquibase/jdbc_drivers/mysql.jar:/usr/local/liquibase/jdbc_drivers/jtds.jar:/usr/local/liquibase/liquibase_extra/liquibase-mssql.jar"
+extraClassPaths="/usr/local/liquibase/jdbc_drivers/postgresql.jar:/usr/local/liquibase/jdbc_drivers/mssql.jar:/usr/local/liquibase/jdbc_drivers/mariadb.jar:/usr/local/liquibase/jdbc_drivers/mysql.jar:/usr/local/liquibase/jdbc_drivers/jtds.jar:/usr/local/liquibase/liquibase_extra/liquibase-mssql.jar"
 binPath="/usr/local/liquibase/liquibase"
 
 if [ "$1" = '--version' ]; then

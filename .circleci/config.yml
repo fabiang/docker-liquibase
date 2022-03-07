@@ -33,11 +33,17 @@ workflows:
   build-all:
     jobs:
       - docker-image:
+          version: "4.8"
+          download_url: "https://github.com/liquibase/liquibase/releases/download/v4.8.0/liquibase-4.8.0.tar.gz"
+          checksum: 7c9cc7b4bedfcd2bdc5baa5c56eae38ecba1b25e
+          extra_args: " -t fabiang/liquibase:latest -t fabiang/liquibase:4"
+          latest: true
+      - docker-image:
           version: "4.5"
           download_url: "https://github.com/liquibase/liquibase/releases/download/v4.5.0/liquibase-4.5.0.tar.gz"
           checksum: f7a5440c348cf87308698447691e6c30fff433de
-          extra_args: " -t fabiang/liquibase:latest -t fabiang/liquibase:4"
-          latest: true
+          extra_args: ""
+          latest: false
       - docker-image:
           version: "4.3"
           download_url: "https://github.com/liquibase/liquibase/releases/download/v4.3.5/liquibase-4.3.5.tar.gz"

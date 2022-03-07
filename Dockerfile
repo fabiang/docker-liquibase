@@ -2,8 +2,8 @@ FROM java:8-jre-alpine
 
 MAINTAINER Fabian Grutschus <f.grutschus@lubyte.de>
 
-ARG LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/v4.5.0/liquibase-4.5.0.tar.gz
-ARG LIQUIBASE_CHECKSUM=f7a5440c348cf87308698447691e6c30fff433de
+ARG LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/v4.8.0/liquibase-4.8.0.tar.gz
+ARG LIQUIBASE_CHECKSUM=7c9cc7b4bedfcd2bdc5baa5c56eae38ecba1b25e
 
 ARG SL4J_VERSION=1.7.32
 ARG SL4J_CHECKSUM=266455a2fe7a8c0281caeaeccb66ed7521c6a992
@@ -15,7 +15,7 @@ COPY ./liquibase-shim.sh /usr/local/bin/liquibase
 # Liquibase itself
 RUN apk update -qq \
     && apk add --no-cache curl bash \
-    && curl -v -L --output /tmp/liquibase-bin.tar.gz ${LIQUIBASE_URL=} \
+    && curl -v -L --output /tmp/liquibase-bin.tar.gz ${LIQUIBASE_URL} \
     && mkdir -p /usr/local/liquibase \
     && echo "$LIQUIBASE_CHECKSUM */tmp/liquibase-bin.tar.gz" | sha1sum -c - \
     && tar -xzf /tmp/liquibase-bin.tar.gz -C /usr/local/liquibase \
@@ -35,6 +35,9 @@ ARG JDBC_SQLSERVER_CHECKSUM=75a670b77ee3e63080d0af90962caa77bc3b7dff
 ARG JDBC_MYSQL_VERSION=8.0.27
 ARG JDBC_MYSQL_CHECKSUM=9243dc26efa3909b13517e002a89d7f5
 
+ARG JDBC_MARIADB_VERSION=2.7.3
+ARG JDBC_MARIADB_CHECKSUM=4a2edc05bd882ad19371d2615c2635dccf8d74f0
+
 ARG JDBC_JTDS_VERSION=1.3.1
 ARG JDBC_JTDS_CHECKSUM=b29ee78ac9281721e2665102e29f5d3b33102fa9
 
@@ -42,14 +45,22 @@ ARG JDBC_JTDS_CHECKSUM=b29ee78ac9281721e2665102e29f5d3b33102fa9
 RUN apk update -qq \
     && apk add --no-cache curl unzip ca-certificates \
     && mkdir -p /usr/local/liquibase/jdbc_drivers/ \
+    \
     ## PostgreSQL
     && curl -v --insecure -L --output /usr/local/liquibase/jdbc_drivers/postgresql.jar \
         https://jdbc.postgresql.org/download/postgresql-${JDBC_POSTGRESQL_VERSION}.jar \
     && echo "$JDBC_POSTGRESQL_CHECKSUM */usr/local/liquibase/jdbc_drivers/postgresql.jar" | sha1sum -c - \
+    \
+    ## MariaDB
+    && curl -v --insecure -L --output /usr/local/liquibase/jdbc_drivers/mariadb.jar \
+        https://downloads.mariadb.com/Connectors/java/connector-java-${JDBC_MARIADB_VERSION}/mariadb-java-client-${JDBC_MARIADB_VERSION}.jar \
+    && echo "$JDBC_MARIADB_CHECKSUM */usr/local/liquibase/jdbc_drivers/mariadb.jar" | sha1sum -c - \
+    \
     ## Native driver from Microsoft for SQL Server
-    && curl -v -L --output /usr/local/liquibase/jdbc_drivers/mssql-jdbc.jar \
+    && curl -v -L --output /usr/local/liquibase/jdbc_drivers/mssql.jar \
         https://github.com/microsoft/mssql-jdbc/releases/download/v${JDBC_SQLSERVER_VERSION}/mssql-jdbc-${JDBC_SQLSERVER_VERSION}.jre8.jar \
-    && echo "$JDBC_SQLSERVER_CHECKSUM */usr/local/liquibase/jdbc_drivers/mssql-jdbc.jar" | sha1sum -c - \
+    && echo "$JDBC_SQLSERVER_CHECKSUM */usr/local/liquibase/jdbc_drivers/mssql.jar" | sha1sum -c - \
+    \
     ## MySQL driver
     && mkdir -p /tmp/mysql \
     && curl -v --insecure -L --output /tmp/mysql-connector-java.tar.gz \
@@ -60,6 +71,7 @@ RUN apk update -qq \
         /usr/local/liquibase/jdbc_drivers/mysql.jar \
     && rm -rf /tmp/mysql \
     && rm -f /tmp/mysql-connector-java.tar.gz \
+    \
     ## JTDS Driver for SQL Server
     && mkdir -p /tmp/jtds \
     && curl -v --insecure -L --output /tmp/jtds.zip \
