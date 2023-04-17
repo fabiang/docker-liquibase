@@ -34,7 +34,7 @@ jobs:
 workflows:
   build-all:
     jobs:
-       - docker-image:
+      - docker-image:
           version: "4.21"
           download_url: "https://github.com/liquibase/liquibase/releases/download/v4.21.1/liquibase-4.21.1.tar.gz"
           checksum_sha1: 57078b5b2242ee6b6938b9d6204afea75e232c34
