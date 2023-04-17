@@ -34,20 +34,27 @@ jobs:
 workflows:
   build-all:
     jobs:
+       - docker-image:
+          version: "4.21"
+          download_url: "https://github.com/liquibase/liquibase/releases/download/v4.21.1/liquibase-4.21.1.tar.gz"
+          checksum_sha1: 57078b5b2242ee6b6938b9d6204afea75e232c34
+          show_banner: false
+          extra_args: " -t fabiang/liquibase:latest -t fabiang/liquibase:4"
+          latest: true
       - docker-image:
           version: "4.17"
           download_url: "https://github.com/liquibase/liquibase/releases/download/v4.17.2/liquibase-4.17.2.tar.gz"
           checksum_sha1: 8829fef88d890d7c77a45912dc6b81acee209c92
           show_banner: false
-          extra_args: " -t fabiang/liquibase:latest -t fabiang/liquibase:4"
-          latest: true
+          extra_args: ""
+          latest: false
       - docker-image:
           version: "4.12"
           download_url: "https://github.com/liquibase/liquibase/releases/download/v4.12.0/liquibase-4.12.0.tar.gz"
           checksum_sha1: 3fe547fa1b319619057f16b387613b9c61ee69da
           show_banner: false
           extra_args: ""
-          latest: true
+          latest: false
       - docker-image:
           version: "4.8"
           download_url: "https://github.com/liquibase/liquibase/releases/download/v4.8.0/liquibase-4.8.0.tar.gz"
