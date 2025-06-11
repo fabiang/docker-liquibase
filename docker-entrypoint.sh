@@ -1,5 +1,7 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+
+set -o pipefail
+set +e
 
 if [ "$1" = 'liquibase' ]; then
     if [ "$MY_LIQUIBASE_SHOW_BANNER" == '0' ] || [ "$MY_LIQUIBASE_SHOW_BANNER" == 'false' ]; then

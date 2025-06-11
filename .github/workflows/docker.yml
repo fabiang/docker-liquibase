@@ -1,0 +1,88 @@
+name: Docker Image
+on:
+  push:
+    paths-ignore:
+      - "README.md"
+      - "LICENSE"
+      - ".editorconfig"
+      - ".github/workflows/auto-update.yml"
+  pull_request:
+jobs:
+  docker-image-alpine:
+    strategy:
+      matrix:
+        # MUST ORDER versions ascending
+        liquibase:
+          - version: "4.21.1"
+            version_major: "4"
+            version_minor: "4.21"
+            download_url: "https://github.com/liquibase/liquibase/releases/download/v4.21.1/liquibase-4.21.1.tar.gz"
+            download_hash: 57078b5b2242ee6b6938b9d6204afea75e232c34
+            latest: true
+            show_banner: false
+          - version: "4.17.2"
+            version_major: ""
+            version_minor: "4.17"
+            download_url: "https://github.com/liquibase/liquibase/releases/download/v4.17.2/liquibase-4.17.2.tar.gz"
+            download_hash: 8829fef88d890d7c77a45912dc6b81acee209c92
+            latest: false
+            show_banner: false
+          - version: "4.12.0"
+            version_major: ""
+            version_minor: "4.12"
+            download_url: "https://github.com/liquibase/liquibase/releases/download/v4.12.0/liquibase-4.12.0.tar.gz"
+            download_hash: 3fe547fa1b319619057f16b387613b9c61ee69da
+            latest: false
+            show_banner: false
+    env:
+      IMAGE_NAME_FULL: "fabiang/liquibase:${{ matrix.liquibase.version }}"
+      IMAGE_NAME_MINOR: "fabiang/liquibase:${{ matrix.liquibase.version_minor }}"
+      IMAGE_NAME_MAJOR: "fabiang/liquibase:${{ matrix.liquibase.version_major }}"
+      DOCKER_BUILDKIT: 1
+    runs-on: ubuntu-latest
+    name: "Alpine v${{ matrix.liquibase.version }}"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jpribyl/action-docker-layer-caching@v0.1.1
+        continue-on-error: true
+      - name: Build Image
+        run: |
+          docker buildx build --pull \
+            -t '${{ env.IMAGE_NAME_FULL }}' \
+            --build-arg 'LIQUIBASE_URL=${{ matrix.liquibase.download_url }}' \
+            --build-arg 'LIQUIBASE_CHECKSUM_SHA1=${{ matrix.liquibase.download_hash }}' \
+            --build-arg 'MY_LIQUIBASE_SHOW_BANNER=${{ matrix.liquibase.show_banner }}' \
+            .
+      - name: Test Image
+        run: |
+          docker run -i --rm ${{ env.IMAGE_NAME_FULL }} liquibase --version
+          docker run -i --rm ${{ env.IMAGE_NAME_FULL }} liquibase --version | grep "PostgreSQL JDBC Driver"
+          docker run -i --rm ${{ env.IMAGE_NAME_FULL }} liquibase --version | grep "jTDS JDBC Driver"
+          docker run -i --rm ${{ env.IMAGE_NAME_FULL }} liquibase --version | grep "mariadb-java-client"
+          docker run -i --rm ${{ env.IMAGE_NAME_FULL }} liquibase --version | grep "liquibase-mssql"
+          docker run -i --rm ${{ env.IMAGE_NAME_FULL }} liquibase --version | grep "Microsoft JDBC Driver for SQL Server"
+          docker run -i --rm ${{ env.IMAGE_NAME_FULL }} liquibase --version | grep -E 'Oracle .* MySQL'
+      - name: Tag Minor
+        if: "${{ matrix.liquibase.version_minor != '' }}"
+        run: docker tag '${{ env.IMAGE_NAME_FULL }}' '${{ env.IMAGE_NAME_MINOR }}'
+      - name: Tag Major
+        if: "${{ matrix.liquibase.version_major != '' }}"
+        run: docker tag '${{ env.IMAGE_NAME_FULL }}' '${{ env.IMAGE_NAME_MAJOR }}'
+      - name: Docker Hub login
+        if: "${{ github.ref == 'refs/heads/main' }}"
+        uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+      - name: Push Image
+        if: "${{ github.ref == 'refs/heads/main' }}"
+        run: |
+          docker push '${{ env.IMAGE_NAME_FULL }}'
+      - name: Push Image Minor
+        if: "${{ matrix.liquibase.version_minor != '' && github.ref == 'refs/heads/main' }}"
+        run: |
+          docker push '${{ env.IMAGE_NAME_MINOR }}'
+      - name: Push Image Major
+        if: "${{ matrix.liquibase.version_major != '' && github.ref == 'refs/heads/main' }}"
+        run: |
+          docker push '${{ env.IMAGE_NAME_MAJOR }}'

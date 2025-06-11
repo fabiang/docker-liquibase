@@ -4,3 +4,5 @@ LICENSE
 README.md
 docker-push
 .circleci
+.github/
+.editorconfig
