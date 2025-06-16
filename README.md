@@ -1,4 +1,4 @@
-# Docker image for Liquibase [![CircleCI](https://circleci.com/gh/fabiang/docker-liquibase.svg?style=svg)](https://circleci.com/gh/fabiang/docker-liquibase)
+# Docker image for Liquibase [![Docker Image](https://github.com/fabiang/docker-liquibase/actions/workflows/docker.yml/badge.svg)](https://github.com/fabiang/docker-liquibase/actions/workflows/docker.yml)
 
 This Docker image includes [Liquibase](https://www.liquibase.org) and supports the following DBMS:
 
@@ -14,7 +14,7 @@ This Docker image includes [Liquibase](https://www.liquibase.org) and supports t
 
 Example for SQL Server:
 
-```
+```bash
 docker run --rm -it fabiang/liquibase liquibase \
     --changeLogFile=somepath/db.changelog.xml \
     --driver=com.microsoft.sqlserver.jdbc.SQLServerDriver \
