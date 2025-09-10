@@ -39,6 +39,7 @@ jobs:
           echo "LIQUIBASE_VERSION_MAJOR=$(echo '${{ fromJson(steps.liquibase_latest_release.outputs.data).tag_name }}' | cut -d '.' -f1 | cut -c 2- )" >> $GITHUB_ENV
           echo "LIQUIBASE_VERSION_MINOR=$(echo '${{ fromJson(steps.liquibase_latest_release.outputs.data).tag_name }}' | cut -d '.' -f1-2 | cut -c 2- )" >> $GITHUB_ENV
           echo "LIQUIBASE_VERSION_ALPINE=${{ steps.get_alpine_latest_version.outputs.result }}" >> $GITHUB_ENV
+          echo "LIQUIBASE_TARBALL=${{ fromJson(steps.liquibase_latest_release.outputs.data).tarball_url }}" >> $GITHUB_ENV
 
       - name: Download TARBALL
         if: ${{ env.LIQUIBASE_LATEST != env.LIQUIBASE_VERSION_ALPINE }}
@@ -71,14 +72,14 @@ jobs:
         uses: mikefarah/yq@master
         with:
           cmd: |
-            yq -i 'with((${{ env.JSONPATH_ALPINE }}[] | select(.sqlcmd_major == "${{ env.LIQUIBASE_VERSION_MAJOR }}")); .sqlcmd_major = "")' .github/workflows/docker.yml
+            yq -i 'with((${{ env.JSONPATH_ALPINE }}[] | select(.version_major == "${{ env.LIQUIBASE_VERSION_MAJOR }}")); .version_major = "")' .github/workflows/docker.yml
 
       - name: Fix Minor versions Alpine
         if: ${{ env.LIQUIBASE_LATEST != env.LIQUIBASE_VERSION_ALPINE }}
         uses: mikefarah/yq@master
         with:
           cmd: |
-            yq -i 'with((${{ env.JSONPATH_ALPINE }}[] | select(.sqlcmd_minor == "${{ env.LIQUIBASE_VERSION_MINOR }}")); .sqlcmd_minor = "")' .github/workflows/docker.yml
+            yq -i 'with((${{ env.JSONPATH_ALPINE }}[] | select(.version_minor == "${{ env.LIQUIBASE_VERSION_MINOR }}")); .version_minor = "")' .github/workflows/docker.yml
 
       - name: Fix Latest Alpine
         if: ${{ env.LIQUIBASE_LATEST != env.LIQUIBASE_VERSION_ALPINE }}
@@ -92,7 +93,16 @@ jobs:
         uses: mikefarah/yq@master
         with:
           cmd: |
-            yq -i '${{ env.JSONPATH_ALPINE }} = ${{ env.JSONPATH_ALPINE }} + {"sqlcmd": "${{ env.LIQUIBASE_LATEST }}", "sqlcmd_major": "${{ env.LIQUIBASE_VERSION_MAJOR }}", "sqlcmd_minor": "${{ env.LIQUIBASE_VERSION_MINOR }}", "sha256": "${{ env.LIQUIBASE_TARBALL_HASH }}", "latest": true}' .github/workflows/docker.yml
+            yq -i '
+              ${{ env.JSONPATH_ALPINE }} = ${{ env.JSONPATH_ALPINE }} + {
+                "version": "${{ env.LIQUIBASE_LATEST }}",
+                "version_major": "${{ env.LIQUIBASE_VERSION_MAJOR }}",
+                "version_minor": "${{ env.LIQUIBASE_VERSION_MINOR }}",
+                "download_hash": "${{ env.LIQUIBASE_TARBALL_HASH }}",
+                "download_url": "${{ env.LIQUIBASE_TARBALL }}",
+                "latest": true,
+                "show_banner": false
+              }' .github/workflows/docker.yml
 
       - name: Create Pull Request
         if: ${{ env.LIQUIBASE_LATEST != env.LIQUIBASE_VERSION_ALPINE }}
