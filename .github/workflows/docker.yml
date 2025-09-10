@@ -18,7 +18,7 @@ jobs:
             version_minor: "4.21"
             download_url: "https://github.com/liquibase/liquibase/releases/download/v4.21.1/liquibase-4.21.1.tar.gz"
             download_hash: 57078b5b2242ee6b6938b9d6204afea75e232c34
-            latest: true
+            latest: false
             show_banner: false
           - version: "4.17.2"
             version_major: ""
@@ -34,6 +34,11 @@ jobs:
             download_hash: 3fe547fa1b319619057f16b387613b9c61ee69da
             latest: false
             show_banner: false
+          - sqlcmd: 4.33.0
+            sqlcmd_major: "4"
+            sqlcmd_minor: "4.33"
+            sha256: 2813663afb9df51703808784b6b272e9d18695a5bb3510f20baac78e10835076
+            latest: true
     env:
       IMAGE_NAME_FULL: "fabiang/liquibase:${{ matrix.liquibase.version }}"
       IMAGE_NAME_MINOR: "fabiang/liquibase:${{ matrix.liquibase.version_minor }}"
