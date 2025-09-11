@@ -29,29 +29,30 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
 
       - name: "Get OUR lastest version for Alpine"
-        id: get_alpine_latest_version
+        id: get_latest_version
         uses: mikefarah/yq@master
         with:
           cmd: yq '${{ env.JSONPATH_ALPINE }}.[-1].version' '.github/workflows/docker.yml'
 
-      - run: |
-          echo "LIQUIBASE_LATEST=$(echo '${{ fromJson(steps.liquibase_latest_release.outputs.data).tag_name }}' | cut -c 2- )" >> $GITHUB_ENV
-          echo "LIQUIBASE_VERSION_MAJOR=$(echo '${{ fromJson(steps.liquibase_latest_release.outputs.data).tag_name }}' | cut -d '.' -f1 | cut -c 2- )" >> $GITHUB_ENV
-          echo "LIQUIBASE_VERSION_MINOR=$(echo '${{ fromJson(steps.liquibase_latest_release.outputs.data).tag_name }}' | cut -d '.' -f1-2 | cut -c 2- )" >> $GITHUB_ENV
-          echo "LIQUIBASE_VERSION_ALPINE=${{ steps.get_alpine_latest_version.outputs.result }}" >> $GITHUB_ENV
-          echo "LIQUIBASE_TARBALL=${{ fromJson(steps.liquibase_latest_release.outputs.data).tarball_url }}" >> $GITHUB_ENV
+      - name: "Extract version + asset"
+        run: |
+          release_data='${{ steps.liquibase_latest_release.outputs.data }}'
+
+          tag_name=$(echo "$release_data" | jq -r '.tag_name')
+          echo "LIQUIBASE_LATEST=${tag_name#v}" >> $GITHUB_ENV
+          echo "LIQUIBASE_VERSION_MAJOR=$(echo "${tag_name#v}" | cut -d '.' -f1)" >> $GITHUB_ENV
+          echo "LIQUIBASE_VERSION_MINOR=$(echo "${tag_name#v}" | cut -d '.' -f1-2)" >> $GITHUB_ENV
+
+          echo "LIQUIBASE_VERSION_ALPINE=${{ steps.get_latest_version.outputs.result }}" >> $GITHUB_ENV
+
+          gzip_url=$(echo "$release_data" | jq -r '.assets[] | select(.content_type=="application/gzip") | .browser_download_url' | head -n1)
+          echo "LIQUIBASE_ASSET_GZIP=$gzip_url" >> $GITHUB_ENV
 
       - name: Download TARBALL
         if: ${{ env.LIQUIBASE_LATEST != env.LIQUIBASE_VERSION_ALPINE }}
         run: |
-          curl -v -L '${{ fromJson(steps.liquibase_latest_release.outputs.data).tarball_url }}' -o 'LIQUIBASE.tar'
+          curl -v -L '${{ env.LIQUIBASE_ASSET_GZIP }}' -o 'LIQUIBASE.tar'
           echo "LIQUIBASE_TARBALL_HASH=$( sha256sum LIQUIBASE.tar | cut -d ' ' -f1 )" >> $GITHUB_ENV
-
-      - name: Download ZIPBALL
-        if: ${{ env.LIQUIBASE_LATEST != env.LIQUIBASE_VERSION_ALPINE }}
-        run: |
-          curl -v -L '${{ fromJson(steps.liquibase_latest_release.outputs.data).zipball_url }}' -o 'LIQUIBASE.zip'
-          echo "LIQUIBASE_ZIPBALL_HASH=$( sha256sum LIQUIBASE.zip | cut -d ' ' -f1 )" >> $GITHUB_ENV
 
       - run: |
           echo Latest Version: $LIQUIBASE_LATEST

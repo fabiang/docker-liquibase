@@ -2,7 +2,7 @@ FROM eclipse-temurin:11-jre-alpine
 
 ARG LIQUIBASE_VERSION=4.17.2
 ARG LIQUIBASE_URL=https://github.com/liquibase/liquibase/releases/download/v4.17.2/liquibase-4.17.2.tar.gz
-ARG LIQUIBASE_CHECKSUM_SHA1=8829fef88d890d7c77a45912dc6b81acee209c92
+ARG LIQUIBASE_CHECKSUM_SHA256=85e910880006bdccfd7d6805a4601bff3311f4eadebc68081b4bfeac5ec7af40
 
 ARG SL4J_VERSION=1.7.32
 ARG SL4J_CHECKSUM_SHA1=266455a2fe7a8c0281caeaeccb66ed7521c6a992
@@ -19,7 +19,7 @@ RUN apk update -qq \
     && apk add --no-cache curl bash \
     && curl -L --output /tmp/liquibase-bin.tar.gz ${LIQUIBASE_URL} \
     && mkdir -p /usr/local/liquibase \
-    && echo "$LIQUIBASE_CHECKSUM_SHA1 */tmp/liquibase-bin.tar.gz" | sha1sum -c - \
+    && echo "$LIQUIBASE_CHECKSUM_SHA256 */tmp/liquibase-bin.tar.gz" | sha256sum -c - \
     && tar -xzf /tmp/liquibase-bin.tar.gz -C /usr/local/liquibase \
     && chmod +x /usr/local/liquibase/liquibase \
     && curl -L --output /usr/local/liquibase/lib/sl4j-api-${SL4J_VERSION}.jar \
