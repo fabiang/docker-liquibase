@@ -38,7 +38,7 @@ jobs:
             version_major: "4"
             version_minor: "4.33"
             download_hash_sha256: 2813663afb9df51703808784b6b272e9d18695a5bb3510f20baac78e10835076
-            download_url: https://api.github.com/repos/liquibase/liquibase/tarball/v4.33.0
+            download_url: "https://github.com/liquibase/liquibase/releases/download/v4.33.0/liquibase-4.33.0.tar.gz"
             latest: true
             show_banner: false
     env:
