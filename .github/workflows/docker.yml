@@ -13,31 +13,31 @@ jobs:
       matrix:
         # MUST ORDER versions ascending
         liquibase:
-          - version: "4.21.1"
+          - version: "4.12.0"
             version_major: ""
-            version_minor: "4.21"
-            download_url: "https://github.com/liquibase/liquibase/releases/download/v4.21.1/liquibase-4.21.1.tar.gz"
-            download_hash: 57078b5b2242ee6b6938b9d6204afea75e232c34
+            version_minor: "4.12"
+            download_url: "https://github.com/liquibase/liquibase/releases/download/v4.12.0/liquibase-4.12.0.tar.gz"
+            download_hash_sha256: 7127d3303df5318821d418856bdd751e32baafa302ac3fa2083ea54e32ae16dc
             latest: false
             show_banner: false
           - version: "4.17.2"
             version_major: ""
             version_minor: "4.17"
             download_url: "https://github.com/liquibase/liquibase/releases/download/v4.17.2/liquibase-4.17.2.tar.gz"
-            download_hash: 8829fef88d890d7c77a45912dc6b81acee209c92
+            download_hash_sha256: 85e910880006bdccfd7d6805a4601bff3311f4eadebc68081b4bfeac5ec7af40
             latest: false
             show_banner: false
-          - version: "4.12.0"
+          - version: "4.21.1"
             version_major: ""
-            version_minor: "4.12"
-            download_url: "https://github.com/liquibase/liquibase/releases/download/v4.12.0/liquibase-4.12.0.tar.gz"
-            download_hash: 3fe547fa1b319619057f16b387613b9c61ee69da
+            version_minor: "4.21"
+            download_url: "https://github.com/liquibase/liquibase/releases/download/v4.21.1/liquibase-4.21.1.tar.gz"
+            download_hash_sha256: c04542865e5ece8b7b1ee9bd6beaefc5315e350620288d6ac1a2d32c3b1f7d8b
             latest: false
             show_banner: false
           - version: 4.33.0
             version_major: "4"
             version_minor: "4.33"
-            download_hash: 2813663afb9df51703808784b6b272e9d18695a5bb3510f20baac78e10835076
+            download_hash_sha256: 2813663afb9df51703808784b6b272e9d18695a5bb3510f20baac78e10835076
             download_url: https://api.github.com/repos/liquibase/liquibase/tarball/v4.33.0
             latest: true
             show_banner: false
@@ -57,7 +57,7 @@ jobs:
           docker buildx build --pull \
             -t '${{ env.IMAGE_NAME_FULL }}' \
             --build-arg 'LIQUIBASE_URL=${{ matrix.liquibase.download_url }}' \
-            --build-arg 'LIQUIBASE_CHECKSUM_SHA1=${{ matrix.liquibase.download_hash }}' \
+            --build-arg 'LIQUIBASE_CHECKSUM_SHA256=${{ matrix.liquibase.download_hash }}' \
             --build-arg 'MY_LIQUIBASE_SHOW_BANNER=${{ matrix.liquibase.show_banner }}' \
             .
       - name: Test Image
