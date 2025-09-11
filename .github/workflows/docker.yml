@@ -57,7 +57,7 @@ jobs:
           docker buildx build --pull \
             -t '${{ env.IMAGE_NAME_FULL }}' \
             --build-arg 'LIQUIBASE_URL=${{ matrix.liquibase.download_url }}' \
-            --build-arg 'LIQUIBASE_CHECKSUM_SHA256=${{ matrix.liquibase.download_hash }}' \
+            --build-arg 'LIQUIBASE_CHECKSUM_SHA256=${{ matrix.liquibase.download_hash_sha256 }}' \
             --build-arg 'MY_LIQUIBASE_SHOW_BANNER=${{ matrix.liquibase.show_banner }}' \
             .
       - name: Test Image
