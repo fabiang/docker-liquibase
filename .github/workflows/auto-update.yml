@@ -51,14 +51,8 @@ jobs:
       - name: Download TARBALL
         if: ${{ env.LIQUIBASE_LATEST != env.LIQUIBASE_VERSION_ALPINE }}
         run: |
-          curl -v -L '${{ fromJson(steps.liquibase_latest_release.outputs.data).tarball_url }}' -o 'LIQUIBASE.tar'
+          curl -v -L '${{ env.LIQUIBASE_ASSET_GZIP }}' -o 'LIQUIBASE.tar'
           echo "LIQUIBASE_TARBALL_HASH=$( sha256sum LIQUIBASE.tar | cut -d ' ' -f1 )" >> $GITHUB_ENV
-
-      - name: Download ZIPBALL
-        if: ${{ env.LIQUIBASE_LATEST != env.LIQUIBASE_VERSION_ALPINE }}
-        run: |
-          curl -v -L '${{ fromJson(steps.liquibase_latest_release.outputs.data).zipball_url }}' -o 'LIQUIBASE.zip'
-          echo "LIQUIBASE_ZIPBALL_HASH=$( sha256sum LIQUIBASE.zip | cut -d ' ' -f1 )" >> $GITHUB_ENV
 
       - run: |
           echo Latest Version: $LIQUIBASE_LATEST
