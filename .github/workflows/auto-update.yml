@@ -35,17 +35,20 @@ jobs:
           cmd: yq '${{ env.JSONPATH_ALPINE }}.[-1].version' '.github/workflows/docker.yml'
 
       - name: "Extract version + asset"
+        shell: bash
         run: |
-          release_data='${{ steps.liquibase_latest_release.outputs.data }}'
+          # Data in eine Datei schreiben, damit die Quotes/Umbrüche nicht kaputt gehen
+          echo '${{ steps.liquibase_latest_release.outputs.data }}' > release.json
 
-          tag_name=$(echo "$release_data" | jq -r '.tag_name')
+          tag_name=$(jq -r '.tag_name' release.json)
           echo "LIQUIBASE_LATEST=${tag_name#v}" >> $GITHUB_ENV
           echo "LIQUIBASE_VERSION_MAJOR=$(echo "${tag_name#v}" | cut -d '.' -f1)" >> $GITHUB_ENV
           echo "LIQUIBASE_VERSION_MINOR=$(echo "${tag_name#v}" | cut -d '.' -f1-2)" >> $GITHUB_ENV
 
-          echo "LIQUIBASE_VERSION_ALPINE=${{ steps.get_latest_version.outputs.result }}" >> $GITHUB_ENV
+          echo "LIQUIBASE_VERSION_ALPINE=${{ steps.get_alpine_latest_version.outputs.result }}" >> $GITHUB_ENV
 
-          gzip_url=$(echo "$release_data" | jq -r '.assets[] | select(.content_type=="application/gzip") | .browser_download_url' | head -n1)
+          # Erstes Asset mit application/gzip finden
+          gzip_url=$(jq -r '.assets[] | select(.content_type=="application/gzip") | .browser_download_url' release.json | head -n1)
           echo "LIQUIBASE_ASSET_GZIP=$gzip_url" >> $GITHUB_ENV
 
       - name: Download TARBALL
