@@ -39,6 +39,13 @@ jobs:
             version_minor: "4.33"
             download_hash_sha256: 689acfcdc97bad0d4c150d1efab9c851e251b398cb3d6326f75e8aafe40ed578
             download_url: "https://github.com/liquibase/liquibase/releases/download/v4.33.0/liquibase-4.33.0.tar.gz"
+            latest: false
+            show_banner: false
+          - version: 5.0.1
+            version_major: "5"
+            version_minor: "5.0"
+            download_hash: 3ae11ccdcd4c080e421e5fd043bdbd624d56fcfc9b294d5d9d898cb8b074e449
+            download_url: ""
             latest: true
             show_banner: false
     env:
